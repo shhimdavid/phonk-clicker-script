@@ -1,6 +1,7 @@
 -- Services
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Player = Players.LocalPlayer
 
 -- Main GUI
 local ScreenGui = Instance.new("ScreenGui")
@@ -11,12 +12,13 @@ ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 -- Main Frame
 local MainFrame = Instance.new("Frame")
 MainFrame.Parent = ScreenGui
-MainFrame.Size = UDim2.new(0, 300, 0, 280)
-MainFrame.Position = UDim2.new(0.5, -150, 0.5, -140)
+MainFrame.Size = UDim2.new(0, 300, 0, 310)
+MainFrame.Position = UDim2.new(0.5, -150, 0.5, -155)
 MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 MainFrame.BorderSizePixel = 0
 MainFrame.Active = true
 MainFrame.Draggable = true
+MainFrame.ClipsDescendants = true
 
 local MainCorner = Instance.new("UICorner", MainFrame)
 MainCorner.CornerRadius = UDim.new(0, 12)
@@ -65,7 +67,6 @@ MinBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 MinBtn.Font = Enum.Font.GothamBold
 MinBtn.TextSize = 18
 MinBtn.BorderSizePixel = 0
-
 local MinCorner = Instance.new("UICorner", MinBtn)
 MinCorner.CornerRadius = UDim.new(0, 6)
 
@@ -80,7 +81,6 @@ CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 CloseBtn.Font = Enum.Font.GothamBold
 CloseBtn.TextSize = 14
 CloseBtn.BorderSizePixel = 0
-
 local CloseCorner = Instance.new("UICorner", CloseBtn)
 CloseCorner.CornerRadius = UDim.new(0, 6)
 
@@ -99,43 +99,36 @@ TabRow.Size = UDim2.new(1, -20, 0, 32)
 TabRow.Position = UDim2.new(0, 10, 0, 10)
 TabRow.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 TabRow.BorderSizePixel = 0
-
 local TabRowCorner = Instance.new("UICorner", TabRow)
 TabRowCorner.CornerRadius = UDim.new(0, 8)
 
--- Tab Button: Auto Clicker
-local Tab1Btn = Instance.new("TextButton")
-Tab1Btn.Parent = TabRow
-Tab1Btn.Size = UDim2.new(0.5, -4, 1, -6)
-Tab1Btn.Position = UDim2.new(0, 3, 0, 3)
+local function makeTabBtn(parent, text, xPos, xSize)
+    local btn = Instance.new("TextButton")
+    btn.Parent = parent
+    btn.Size = UDim2.new(xSize, -4, 1, -6)
+    btn.Position = UDim2.new(xPos, 3, 0, 3)
+    btn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+    btn.Text = text
+    btn.TextColor3 = Color3.fromRGB(180, 180, 180)
+    btn.Font = Enum.Font.GothamBold
+    btn.TextSize = 12
+    btn.BorderSizePixel = 0
+    local c = Instance.new("UICorner", btn)
+    c.CornerRadius = UDim.new(0, 6)
+    return btn
+end
+
+local Tab1Btn = makeTabBtn(TabRow, "Auto Clicker", 0, 1/3)
+local Tab2Btn = makeTabBtn(TabRow, "Auto Hatch", 1/3, 1/3)
+local Tab3Btn = makeTabBtn(TabRow, "Info", 2/3, 1/3)
+
+-- Active tab highlight
 Tab1Btn.BackgroundColor3 = Color3.fromRGB(0, 200, 100)
-Tab1Btn.Text = "Auto Clicker"
 Tab1Btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-Tab1Btn.Font = Enum.Font.GothamBold
-Tab1Btn.TextSize = 13
-Tab1Btn.BorderSizePixel = 0
 
-local T1Corner = Instance.new("UICorner", Tab1Btn)
-T1Corner.CornerRadius = UDim.new(0, 6)
-
--- Tab Button: Info
-local Tab2Btn = Instance.new("TextButton")
-Tab2Btn.Parent = TabRow
-Tab2Btn.Size = UDim2.new(0.5, -4, 1, -6)
-Tab2Btn.Position = UDim2.new(0.5, 1, 0, 3)
-Tab2Btn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-Tab2Btn.Text = "Info"
-Tab2Btn.TextColor3 = Color3.fromRGB(180, 180, 180)
-Tab2Btn.Font = Enum.Font.GothamBold
-Tab2Btn.TextSize = 13
-Tab2Btn.BorderSizePixel = 0
-
-local T2Corner = Instance.new("UICorner", Tab2Btn)
-T2Corner.CornerRadius = UDim.new(0, 6)
-
--- =====================
+-- ========================
 -- TAB 1: Auto Clicker
--- =====================
+-- ========================
 local Tab1Content = Instance.new("Frame")
 Tab1Content.Parent = ContentFrame
 Tab1Content.Size = UDim2.new(1, -20, 1, -58)
@@ -153,7 +146,6 @@ ToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 ToggleButton.Font = Enum.Font.GothamBold
 ToggleButton.TextSize = 17
 ToggleButton.BorderSizePixel = 0
-
 local TBCorner = Instance.new("UICorner", ToggleButton)
 TBCorner.CornerRadius = UDim.new(0, 8)
 
@@ -177,9 +169,9 @@ CounterLabel.TextColor3 = Color3.fromRGB(80, 80, 80)
 CounterLabel.Font = Enum.Font.Gotham
 CounterLabel.TextSize = 12
 
--- =====================
--- TAB 2: Info
--- =====================
+-- ========================
+-- TAB 2: Auto Hatch
+-- ========================
 local Tab2Content = Instance.new("Frame")
 Tab2Content.Parent = ContentFrame
 Tab2Content.Size = UDim2.new(1, -20, 1, -58)
@@ -187,13 +179,118 @@ Tab2Content.Position = UDim2.new(0, 10, 0, 52)
 Tab2Content.BackgroundTransparency = 1
 Tab2Content.Visible = false
 
+-- Dropdown label
+local DropLabel = Instance.new("TextLabel")
+DropLabel.Parent = Tab2Content
+DropLabel.Size = UDim2.new(1, 0, 0, 20)
+DropLabel.Position = UDim2.new(0, 0, 0, 0)
+DropLabel.BackgroundTransparency = 1
+DropLabel.Text = "Select Egg:"
+DropLabel.TextColor3 = Color3.fromRGB(180, 180, 180)
+DropLabel.Font = Enum.Font.GothamBold
+DropLabel.TextSize = 13
+DropLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+-- Dropdown Button
+local DropBtn = Instance.new("TextButton")
+DropBtn.Parent = Tab2Content
+DropBtn.Size = UDim2.new(1, 0, 0, 36)
+DropBtn.Position = UDim2.new(0, 0, 0, 22)
+DropBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+DropBtn.Text = "▼  Select an egg..."
+DropBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
+DropBtn.Font = Enum.Font.Gotham
+DropBtn.TextSize = 13
+DropBtn.TextXAlignment = Enum.TextXAlignment.Left
+DropBtn.BorderSizePixel = 0
+local DropBtnCorner = Instance.new("UICorner", DropBtn)
+DropBtnCorner.CornerRadius = UDim.new(0, 8)
+local DropBtnStroke = Instance.new("UIStroke", DropBtn)
+DropBtnStroke.Color = Color3.fromRGB(60, 60, 60)
+DropBtnStroke.Thickness = 1
+-- Padding inside button
+local DropBtnPad = Instance.new("UIPadding", DropBtn)
+DropBtnPad.PaddingLeft = UDim.new(0, 10)
+
+-- Dropdown List (scrollable)
+local DropList = Instance.new("Frame")
+DropList.Parent = Tab2Content
+DropList.Size = UDim2.new(1, 0, 0, 0)
+DropList.Position = UDim2.new(0, 0, 0, 60)
+DropList.BackgroundColor3 = Color3.fromRGB(28, 28, 28)
+DropList.BorderSizePixel = 0
+DropList.Visible = false
+DropList.ZIndex = 10
+DropList.ClipsDescendants = true
+local DropListCorner = Instance.new("UICorner", DropList)
+DropListCorner.CornerRadius = UDim.new(0, 8)
+local DropListStroke = Instance.new("UIStroke", DropList)
+DropListStroke.Color = Color3.fromRGB(60, 60, 60)
+DropListStroke.Thickness = 1
+
+local ScrollFrame = Instance.new("ScrollingFrame")
+ScrollFrame.Parent = DropList
+ScrollFrame.Size = UDim2.new(1, 0, 1, 0)
+ScrollFrame.BackgroundTransparency = 1
+ScrollFrame.BorderSizePixel = 0
+ScrollFrame.ScrollBarThickness = 4
+ScrollFrame.ScrollBarImageColor3 = Color3.fromRGB(0, 200, 100)
+ScrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+ScrollFrame.ZIndex = 10
+
+local ListLayout = Instance.new("UIListLayout", ScrollFrame)
+ListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+ListLayout.Padding = UDim.new(0, 2)
+
+-- Hatch Toggle
+local HatchToggle = Instance.new("TextButton")
+HatchToggle.Parent = Tab2Content
+HatchToggle.Size = UDim2.new(1, 0, 0, 40)
+HatchToggle.Position = UDim2.new(0, 0, 0, 168)
+HatchToggle.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+HatchToggle.Text = "Auto Hatch: OFF"
+HatchToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
+HatchToggle.Font = Enum.Font.GothamBold
+HatchToggle.TextSize = 15
+HatchToggle.BorderSizePixel = 0
+local HTCorner = Instance.new("UICorner", HatchToggle)
+HTCorner.CornerRadius = UDim.new(0, 8)
+
+local HatchStatusLabel = Instance.new("TextLabel")
+HatchStatusLabel.Parent = Tab2Content
+HatchStatusLabel.Size = UDim2.new(1, 0, 0, 25)
+HatchStatusLabel.Position = UDim2.new(0, 0, 0, 215)
+HatchStatusLabel.BackgroundTransparency = 1
+HatchStatusLabel.Text = "Status: Idle"
+HatchStatusLabel.TextColor3 = Color3.fromRGB(150, 150, 150)
+HatchStatusLabel.Font = Enum.Font.Gotham
+HatchStatusLabel.TextSize = 12
+
+local HatchCountLabel = Instance.new("TextLabel")
+HatchCountLabel.Parent = Tab2Content
+HatchCountLabel.Size = UDim2.new(1, 0, 0, 25)
+HatchCountLabel.Position = UDim2.new(0, 0, 0, 235)
+HatchCountLabel.BackgroundTransparency = 1
+HatchCountLabel.Text = "Hatched: 0"
+HatchCountLabel.TextColor3 = Color3.fromRGB(80, 80, 80)
+HatchCountLabel.Font = Enum.Font.Gotham
+HatchCountLabel.TextSize = 12
+
+-- ========================
+-- TAB 3: Info
+-- ========================
+local Tab3Content = Instance.new("Frame")
+Tab3Content.Parent = ContentFrame
+Tab3Content.Size = UDim2.new(1, -20, 1, -58)
+Tab3Content.Position = UDim2.new(0, 10, 0, 52)
+Tab3Content.BackgroundTransparency = 1
+Tab3Content.Visible = false
+
 local InfoCard = Instance.new("Frame")
-InfoCard.Parent = Tab2Content
+InfoCard.Parent = Tab3Content
 InfoCard.Size = UDim2.new(1, 0, 0, 130)
-InfoCard.Position = UDim2.new(0, 0, 0, 0)
 InfoCard.BackgroundColor3 = Color3.fromRGB(28, 28, 28)
 InfoCard.BorderSizePixel = 0
-
 local InfoCardCorner = Instance.new("UICorner", InfoCard)
 InfoCardCorner.CornerRadius = UDim.new(0, 10)
 
@@ -212,7 +309,7 @@ VersionLabel.Parent = InfoCard
 VersionLabel.Size = UDim2.new(1, 0, 0, 25)
 VersionLabel.Position = UDim2.new(0, 0, 0, 55)
 VersionLabel.BackgroundTransparency = 1
-VersionLabel.Text = "version: 1.1"
+VersionLabel.Text = "version: 1.2"
 VersionLabel.TextColor3 = Color3.fromRGB(150, 150, 150)
 VersionLabel.Font = Enum.Font.Gotham
 VersionLabel.TextSize = 13
@@ -227,26 +324,189 @@ MadeByLabel.TextColor3 = Color3.fromRGB(150, 150, 150)
 MadeByLabel.Font = Enum.Font.Gotham
 MadeByLabel.TextSize = 13
 
--- =====================
--- LOGIC
--- =====================
+-- ========================
+-- RESIZE HANDLE
+-- ========================
+local ResizeHandle = Instance.new("TextButton")
+ResizeHandle.Parent = MainFrame
+ResizeHandle.Size = UDim2.new(0, 18, 0, 18)
+ResizeHandle.Position = UDim2.new(1, -18, 1, -18)
+ResizeHandle.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+ResizeHandle.Text = "⊿"
+ResizeHandle.TextColor3 = Color3.fromRGB(150, 150, 150)
+ResizeHandle.Font = Enum.Font.Gotham
+ResizeHandle.TextSize = 11
+ResizeHandle.BorderSizePixel = 0
+ResizeHandle.ZIndex = 5
+local RHCorner = Instance.new("UICorner", ResizeHandle)
+RHCorner.CornerRadius = UDim.new(0, 4)
+
+-- Resize logic
+local resizing = false
+local minW, minH = 240, 240
+
+ResizeHandle.MouseButton1Down:Connect(function()
+    resizing = true
+    local startMouse = game:GetService("UserInputService"):GetMouseLocation()
+    local startSize = MainFrame.AbsoluteSize
+
+    local conn
+    conn = game:GetService("RunService").RenderStepped:Connect(function()
+        if not resizing then conn:Disconnect() return end
+        local mouse = game:GetService("UserInputService"):GetMouseLocation()
+        local dx = mouse.X - startMouse.X
+        local dy = mouse.Y - startMouse.Y
+        local newW = math.max(minW, startSize.X + dx)
+        local newH = math.max(minH, startSize.Y + dy)
+        MainFrame.Size = UDim2.new(0, newW, 0, newH)
+    end)
+end)
+
+ResizeHandle.MouseButton1Up:Connect(function() resizing = false end)
+game:GetService("UserInputService").InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        resizing = false
+    end
+end)
+
+-- ========================
+-- EGG DROPDOWN LOGIC
+-- ========================
+local selectedEgg = nil
+local dropOpen = false
+local eggList = {}
+
+local function loadEggs()
+    local eggsFolder = ReplicatedStorage:FindFirstChild("Eggs")
+    if not eggsFolder then
+        DropBtn.Text = "▼  No Eggs folder found"
+        return
+    end
+    for _, egg in ipairs(eggsFolder:GetChildren()) do
+        table.insert(eggList, egg.Name)
+    end
+    -- also catch eggs added later
+    eggsFolder.ChildAdded:Connect(function(egg)
+        table.insert(eggList, egg.Name)
+    end)
+end
+
+local function buildDropList()
+    -- clear old buttons
+    for _, c in ipairs(ScrollFrame:GetChildren()) do
+        if c:IsA("TextButton") then c:Destroy() end
+    end
+
+    for i, eggName in ipairs(eggList) do
+        local item = Instance.new("TextButton")
+        item.Parent = ScrollFrame
+        item.Size = UDim2.new(1, -8, 0, 32)
+        item.BackgroundColor3 = Color3.fromRGB(38, 38, 38)
+        item.Text = eggName
+        item.TextColor3 = Color3.fromRGB(220, 220, 220)
+        item.Font = Enum.Font.Gotham
+        item.TextSize = 12
+        item.BorderSizePixel = 0
+        item.LayoutOrder = i
+        item.ZIndex = 11
+        local ic = Instance.new("UICorner", item)
+        ic.CornerRadius = UDim.new(0, 6)
+        local ip = Instance.new("UIPadding", item)
+        ip.PaddingLeft = UDim.new(0, 10)
+        item.TextXAlignment = Enum.TextXAlignment.Left
+
+        item.MouseButton1Click:Connect(function()
+            selectedEgg = eggName
+            DropBtn.Text = "▼  " .. eggName
+            dropOpen = false
+            DropList.Visible = false
+            DropList.Size = UDim2.new(1, 0, 0, 0)
+        end)
+
+        item.MouseEnter:Connect(function()
+            item.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+        end)
+        item.MouseLeave:Connect(function()
+            item.BackgroundColor3 = Color3.fromRGB(38, 38, 38)
+        end)
+    end
+
+    local totalH = math.min(#eggList * 34, 120)
+    ScrollFrame.CanvasSize = UDim2.new(0, 0, 0, #eggList * 34)
+    DropList.Size = UDim2.new(1, 0, 0, totalH)
+end
+
+loadEggs()
+
+DropBtn.MouseButton1Click:Connect(function()
+    dropOpen = not dropOpen
+    if dropOpen then
+        buildDropList()
+        DropList.Visible = true
+    else
+        DropList.Visible = false
+        DropList.Size = UDim2.new(1, 0, 0, 0)
+    end
+end)
+
+-- ========================
+-- COIN BYPASS ATTEMPT
+-- ========================
+local function bypassCoins()
+    pcall(function()
+        local stats = Player:FindFirstChild("leaderstats")
+        if stats then
+            for _, v in ipairs(stats:GetChildren()) do
+                if v.Name:lower():find("coin") or v.Name:lower():find("cash") or v.Name:lower():find("gem") then
+                    v.Value = v.Value + 999999999
+                end
+            end
+        end
+    end)
+end
+
+-- ========================
+-- LOGIC / STATE
+-- ========================
 _G.clicking = false
+_G.hatching = false
 local minimized = false
 local clicks = 0
+local hatched = 0
 
+-- Auto clicker loop
 task.spawn(function()
     while true do
         if _G.clicking then
             ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("Clicker"):FireServer()
             clicks = clicks + 1
             CounterLabel.Text = "Total clicks: " .. clicks
-            task.wait(0.03) -- ~33 clicks/sec
+            task.wait(0.03)
         else
             task.wait(0.1)
         end
     end
 end)
 
+-- Auto hatch loop
+task.spawn(function()
+    while true do
+        if _G.hatching and selectedEgg then
+            bypassCoins()
+            pcall(function()
+                local args = { selectedEgg, 1 }
+                ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("Egg"):InvokeServer(unpack(args))
+            end)
+            hatched = hatched + 1
+            HatchCountLabel.Text = "Hatched: " .. hatched
+            task.wait(0.1)
+        else
+            task.wait(0.1)
+        end
+    end
+end)
+
+-- Clicker toggle
 ToggleButton.MouseButton1Click:Connect(function()
     _G.clicking = not _G.clicking
     if _G.clicking then
@@ -262,38 +522,62 @@ ToggleButton.MouseButton1Click:Connect(function()
     end
 end)
 
-Tab1Btn.MouseButton1Click:Connect(function()
-    Tab1Content.Visible = true
-    Tab2Content.Visible = false
-    Tab1Btn.BackgroundColor3 = Color3.fromRGB(0, 200, 100)
-    Tab1Btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Tab2Btn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-    Tab2Btn.TextColor3 = Color3.fromRGB(180, 180, 180)
+-- Hatch toggle
+HatchToggle.MouseButton1Click:Connect(function()
+    if not selectedEgg then
+        HatchStatusLabel.Text = "⚠ Pick an egg first!"
+        HatchStatusLabel.TextColor3 = Color3.fromRGB(255, 200, 0)
+        return
+    end
+    _G.hatching = not _G.hatching
+    if _G.hatching then
+        HatchToggle.BackgroundColor3 = Color3.fromRGB(0, 200, 100)
+        HatchToggle.Text = "Auto Hatch: ON"
+        HatchStatusLabel.Text = "Hatching: " .. selectedEgg
+        HatchStatusLabel.TextColor3 = Color3.fromRGB(0, 200, 100)
+    else
+        HatchToggle.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+        HatchToggle.Text = "Auto Hatch: OFF"
+        HatchStatusLabel.Text = "Status: Idle"
+        HatchStatusLabel.TextColor3 = Color3.fromRGB(150, 150, 150)
+    end
 end)
 
-Tab2Btn.MouseButton1Click:Connect(function()
-    Tab1Content.Visible = false
-    Tab2Content.Visible = true
-    Tab2Btn.BackgroundColor3 = Color3.fromRGB(0, 200, 100)
-    Tab2Btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Tab1Btn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-    Tab1Btn.TextColor3 = Color3.fromRGB(180, 180, 180)
-end)
+-- Tab switching
+local function setTab(active, content)
+    for _, btn in ipairs({Tab1Btn, Tab2Btn, Tab3Btn}) do
+        btn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+        btn.TextColor3 = Color3.fromRGB(180, 180, 180)
+    end
+    for _, frame in ipairs({Tab1Content, Tab2Content, Tab3Content}) do
+        frame.Visible = false
+    end
+    active.BackgroundColor3 = Color3.fromRGB(0, 200, 100)
+    active.TextColor3 = Color3.fromRGB(255, 255, 255)
+    content.Visible = true
+end
 
+Tab1Btn.MouseButton1Click:Connect(function() setTab(Tab1Btn, Tab1Content) end)
+Tab2Btn.MouseButton1Click:Connect(function() setTab(Tab2Btn, Tab2Content) end)
+Tab3Btn.MouseButton1Click:Connect(function() setTab(Tab3Btn, Tab3Content) end)
+
+-- Minimize
 MinBtn.MouseButton1Click:Connect(function()
     minimized = not minimized
     if minimized then
         ContentFrame.Visible = false
-        MainFrame.Size = UDim2.new(0, 300, 0, 45)
+        MainFrame.Size = UDim2.new(0, MainFrame.AbsoluteSize.X, 0, 45)
         MinBtn.Text = "+"
     else
         ContentFrame.Visible = true
-        MainFrame.Size = UDim2.new(0, 300, 0, 280)
+        MainFrame.Size = UDim2.new(0, MainFrame.AbsoluteSize.X, 0, 310)
         MinBtn.Text = "-"
     end
 end)
 
+-- Close
 CloseBtn.MouseButton1Click:Connect(function()
     _G.clicking = false
+    _G.hatching = false
     ScreenGui:Destroy()
 end)
