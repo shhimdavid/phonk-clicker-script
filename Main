@@ -1,0 +1,299 @@
+-- Services
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+-- Main GUI
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Parent = game.CoreGui
+ScreenGui.ResetOnSpawn = false
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+-- Main Frame
+local MainFrame = Instance.new("Frame")
+MainFrame.Parent = ScreenGui
+MainFrame.Size = UDim2.new(0, 300, 0, 280)
+MainFrame.Position = UDim2.new(0.5, -150, 0.5, -140)
+MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+MainFrame.BorderSizePixel = 0
+MainFrame.Active = true
+MainFrame.Draggable = true
+
+local MainCorner = Instance.new("UICorner", MainFrame)
+MainCorner.CornerRadius = UDim.new(0, 12)
+
+local MainStroke = Instance.new("UIStroke", MainFrame)
+MainStroke.Color = Color3.fromRGB(60, 60, 60)
+MainStroke.Thickness = 1.5
+
+-- Top Bar
+local TopBar = Instance.new("Frame")
+TopBar.Parent = MainFrame
+TopBar.Size = UDim2.new(1, 0, 0, 45)
+TopBar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+TopBar.BorderSizePixel = 0
+
+local TopCorner = Instance.new("UICorner", TopBar)
+TopCorner.CornerRadius = UDim.new(0, 12)
+
+local TopFix = Instance.new("Frame")
+TopFix.Parent = TopBar
+TopFix.Size = UDim2.new(1, 0, 0.5, 0)
+TopFix.Position = UDim2.new(0, 0, 0.5, 0)
+TopFix.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+TopFix.BorderSizePixel = 0
+
+-- Title
+local Title = Instance.new("TextLabel")
+Title.Parent = TopBar
+Title.Size = UDim2.new(0, 200, 1, 0)
+Title.Position = UDim2.new(0, 12, 0, 0)
+Title.BackgroundTransparency = 1
+Title.Text = "Phonk Clicker Script"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 14
+Title.TextXAlignment = Enum.TextXAlignment.Left
+
+-- Minimize Button
+local MinBtn = Instance.new("TextButton")
+MinBtn.Parent = TopBar
+MinBtn.Size = UDim2.new(0, 28, 0, 28)
+MinBtn.Position = UDim2.new(1, -64, 0.5, -14)
+MinBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+MinBtn.Text = "-"
+MinBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+MinBtn.Font = Enum.Font.GothamBold
+MinBtn.TextSize = 18
+MinBtn.BorderSizePixel = 0
+
+local MinCorner = Instance.new("UICorner", MinBtn)
+MinCorner.CornerRadius = UDim.new(0, 6)
+
+-- Close Button
+local CloseBtn = Instance.new("TextButton")
+CloseBtn.Parent = TopBar
+CloseBtn.Size = UDim2.new(0, 28, 0, 28)
+CloseBtn.Position = UDim2.new(1, -32, 0.5, -14)
+CloseBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+CloseBtn.Text = "X"
+CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseBtn.Font = Enum.Font.GothamBold
+CloseBtn.TextSize = 14
+CloseBtn.BorderSizePixel = 0
+
+local CloseCorner = Instance.new("UICorner", CloseBtn)
+CloseCorner.CornerRadius = UDim.new(0, 6)
+
+-- Content Frame
+local ContentFrame = Instance.new("Frame")
+ContentFrame.Parent = MainFrame
+ContentFrame.Size = UDim2.new(1, 0, 1, -45)
+ContentFrame.Position = UDim2.new(0, 0, 0, 45)
+ContentFrame.BackgroundTransparency = 1
+ContentFrame.BorderSizePixel = 0
+
+-- Tab Buttons Row
+local TabRow = Instance.new("Frame")
+TabRow.Parent = ContentFrame
+TabRow.Size = UDim2.new(1, -20, 0, 32)
+TabRow.Position = UDim2.new(0, 10, 0, 10)
+TabRow.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+TabRow.BorderSizePixel = 0
+
+local TabRowCorner = Instance.new("UICorner", TabRow)
+TabRowCorner.CornerRadius = UDim.new(0, 8)
+
+-- Tab Button: Auto Clicker
+local Tab1Btn = Instance.new("TextButton")
+Tab1Btn.Parent = TabRow
+Tab1Btn.Size = UDim2.new(0.5, -4, 1, -6)
+Tab1Btn.Position = UDim2.new(0, 3, 0, 3)
+Tab1Btn.BackgroundColor3 = Color3.fromRGB(0, 200, 100)
+Tab1Btn.Text = "Auto Clicker"
+Tab1Btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+Tab1Btn.Font = Enum.Font.GothamBold
+Tab1Btn.TextSize = 13
+Tab1Btn.BorderSizePixel = 0
+
+local T1Corner = Instance.new("UICorner", Tab1Btn)
+T1Corner.CornerRadius = UDim.new(0, 6)
+
+-- Tab Button: Info
+local Tab2Btn = Instance.new("TextButton")
+Tab2Btn.Parent = TabRow
+Tab2Btn.Size = UDim2.new(0.5, -4, 1, -6)
+Tab2Btn.Position = UDim2.new(0.5, 1, 0, 3)
+Tab2Btn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+Tab2Btn.Text = "Info"
+Tab2Btn.TextColor3 = Color3.fromRGB(180, 180, 180)
+Tab2Btn.Font = Enum.Font.GothamBold
+Tab2Btn.TextSize = 13
+Tab2Btn.BorderSizePixel = 0
+
+local T2Corner = Instance.new("UICorner", Tab2Btn)
+T2Corner.CornerRadius = UDim.new(0, 6)
+
+-- =====================
+-- TAB 1: Auto Clicker
+-- =====================
+local Tab1Content = Instance.new("Frame")
+Tab1Content.Parent = ContentFrame
+Tab1Content.Size = UDim2.new(1, -20, 1, -58)
+Tab1Content.Position = UDim2.new(0, 10, 0, 52)
+Tab1Content.BackgroundTransparency = 1
+Tab1Content.Visible = true
+
+local ToggleButton = Instance.new("TextButton")
+ToggleButton.Parent = Tab1Content
+ToggleButton.Size = UDim2.new(1, 0, 0, 50)
+ToggleButton.Position = UDim2.new(0, 0, 0, 0)
+ToggleButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+ToggleButton.Text = "Clicker: OFF"
+ToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+ToggleButton.Font = Enum.Font.GothamBold
+ToggleButton.TextSize = 17
+ToggleButton.BorderSizePixel = 0
+
+local TBCorner = Instance.new("UICorner", ToggleButton)
+TBCorner.CornerRadius = UDim.new(0, 8)
+
+local StatusLabel = Instance.new("TextLabel")
+StatusLabel.Parent = Tab1Content
+StatusLabel.Size = UDim2.new(1, 0, 0, 30)
+StatusLabel.Position = UDim2.new(0, 0, 0, 60)
+StatusLabel.BackgroundTransparency = 1
+StatusLabel.Text = "Status: Idle"
+StatusLabel.TextColor3 = Color3.fromRGB(150, 150, 150)
+StatusLabel.Font = Enum.Font.Gotham
+StatusLabel.TextSize = 13
+
+local CounterLabel = Instance.new("TextLabel")
+CounterLabel.Parent = Tab1Content
+CounterLabel.Size = UDim2.new(1, 0, 0, 25)
+CounterLabel.Position = UDim2.new(0, 0, 0, 90)
+CounterLabel.BackgroundTransparency = 1
+CounterLabel.Text = "Total clicks: 0"
+CounterLabel.TextColor3 = Color3.fromRGB(80, 80, 80)
+CounterLabel.Font = Enum.Font.Gotham
+CounterLabel.TextSize = 12
+
+-- =====================
+-- TAB 2: Info
+-- =====================
+local Tab2Content = Instance.new("Frame")
+Tab2Content.Parent = ContentFrame
+Tab2Content.Size = UDim2.new(1, -20, 1, -58)
+Tab2Content.Position = UDim2.new(0, 10, 0, 52)
+Tab2Content.BackgroundTransparency = 1
+Tab2Content.Visible = false
+
+local InfoCard = Instance.new("Frame")
+InfoCard.Parent = Tab2Content
+InfoCard.Size = UDim2.new(1, 0, 0, 130)
+InfoCard.Position = UDim2.new(0, 0, 0, 0)
+InfoCard.BackgroundColor3 = Color3.fromRGB(28, 28, 28)
+InfoCard.BorderSizePixel = 0
+
+local InfoCardCorner = Instance.new("UICorner", InfoCard)
+InfoCardCorner.CornerRadius = UDim.new(0, 10)
+
+local HubName = Instance.new("TextLabel")
+HubName.Parent = InfoCard
+HubName.Size = UDim2.new(1, 0, 0, 30)
+HubName.Position = UDim2.new(0, 0, 0, 18)
+HubName.BackgroundTransparency = 1
+HubName.Text = "Phonk Clicker Script"
+HubName.TextColor3 = Color3.fromRGB(255, 255, 255)
+HubName.Font = Enum.Font.GothamBold
+HubName.TextSize = 16
+
+local VersionLabel = Instance.new("TextLabel")
+VersionLabel.Parent = InfoCard
+VersionLabel.Size = UDim2.new(1, 0, 0, 25)
+VersionLabel.Position = UDim2.new(0, 0, 0, 55)
+VersionLabel.BackgroundTransparency = 1
+VersionLabel.Text = "version: 1.1"
+VersionLabel.TextColor3 = Color3.fromRGB(150, 150, 150)
+VersionLabel.Font = Enum.Font.Gotham
+VersionLabel.TextSize = 13
+
+local MadeByLabel = Instance.new("TextLabel")
+MadeByLabel.Parent = InfoCard
+MadeByLabel.Size = UDim2.new(1, 0, 0, 25)
+MadeByLabel.Position = UDim2.new(0, 0, 0, 82)
+MadeByLabel.BackgroundTransparency = 1
+MadeByLabel.Text = "made by: @imtherealdavidshh"
+MadeByLabel.TextColor3 = Color3.fromRGB(150, 150, 150)
+MadeByLabel.Font = Enum.Font.Gotham
+MadeByLabel.TextSize = 13
+
+-- =====================
+-- LOGIC
+-- =====================
+_G.clicking = false
+local minimized = false
+local clicks = 0
+
+task.spawn(function()
+    while true do
+        if _G.clicking then
+            ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("Clicker"):FireServer()
+            clicks = clicks + 1
+            CounterLabel.Text = "Total clicks: " .. clicks
+            task.wait(0.03) -- ~33 clicks/sec
+        else
+            task.wait(0.1)
+        end
+    end
+end)
+
+ToggleButton.MouseButton1Click:Connect(function()
+    _G.clicking = not _G.clicking
+    if _G.clicking then
+        ToggleButton.BackgroundColor3 = Color3.fromRGB(0, 200, 100)
+        ToggleButton.Text = "Clicker: ON"
+        StatusLabel.Text = "Status: Running"
+        StatusLabel.TextColor3 = Color3.fromRGB(0, 200, 100)
+    else
+        ToggleButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+        ToggleButton.Text = "Clicker: OFF"
+        StatusLabel.Text = "Status: Idle"
+        StatusLabel.TextColor3 = Color3.fromRGB(150, 150, 150)
+    end
+end)
+
+Tab1Btn.MouseButton1Click:Connect(function()
+    Tab1Content.Visible = true
+    Tab2Content.Visible = false
+    Tab1Btn.BackgroundColor3 = Color3.fromRGB(0, 200, 100)
+    Tab1Btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Tab2Btn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+    Tab2Btn.TextColor3 = Color3.fromRGB(180, 180, 180)
+end)
+
+Tab2Btn.MouseButton1Click:Connect(function()
+    Tab1Content.Visible = false
+    Tab2Content.Visible = true
+    Tab2Btn.BackgroundColor3 = Color3.fromRGB(0, 200, 100)
+    Tab2Btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Tab1Btn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+    Tab1Btn.TextColor3 = Color3.fromRGB(180, 180, 180)
+end)
+
+MinBtn.MouseButton1Click:Connect(function()
+    minimized = not minimized
+    if minimized then
+        ContentFrame.Visible = false
+        MainFrame.Size = UDim2.new(0, 300, 0, 45)
+        MinBtn.Text = "+"
+    else
+        ContentFrame.Visible = true
+        MainFrame.Size = UDim2.new(0, 300, 0, 280)
+        MinBtn.Text = "-"
+    end
+end)
+
+CloseBtn.MouseButton1Click:Connect(function()
+    _G.clicking = false
+    ScreenGui:Destroy()
+end)
