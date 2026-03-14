@@ -18,7 +18,7 @@ ScreenGui.Parent = game.CoreGui
 ScreenGui.ResetOnSpawn = false
 ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
--- Main Frame (starts scaled to 0 for intro anim)
+-- Main Frame
 local MainFrame = Instance.new("Frame")
 MainFrame.Parent = ScreenGui
 MainFrame.Size = UDim2.new(0, 0, 0, 0)
@@ -58,7 +58,7 @@ TopFix.Position = UDim2.new(0, 0, 0.5, 0)
 TopFix.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 TopFix.BorderSizePixel = 0
 
--- Animated accent line under top bar
+-- Accent line
 local AccentLine = Instance.new("Frame")
 AccentLine.Parent = MainFrame
 AccentLine.Size = UDim2.new(0, 0, 0, 2)
@@ -109,22 +109,11 @@ CloseBtn.BorderSizePixel = 0
 local CloseCorner = Instance.new("UICorner", CloseBtn)
 CloseCorner.CornerRadius = UDim.new(0, 6)
 
--- Button hover animations
+-- Hover animations
 local function addHover(btn, normalColor, hoverColor)
-    btn.MouseEnter:Connect(function()
-        tween(btn, {BackgroundColor3 = hoverColor}, 0.15)
-    end)
-    btn.MouseLeave:Connect(function()
-        tween(btn, {BackgroundColor3 = normalColor}, 0.15)
-    end)
-    btn.MouseButton1Down:Connect(function()
-        tween(btn, {Size = UDim2.new(btn.Size.X.Scale, btn.Size.X.Offset - 2, btn.Size.Y.Scale, btn.Size.Y.Offset - 2)}, 0.08)
-    end)
-    btn.MouseButton1Up:Connect(function()
-        tween(btn, {Size = UDim2.new(btn.Size.X.Scale, btn.Size.X.Offset + 2, btn.Size.Y.Scale, btn.Size.Y.Offset + 2)}, 0.08)
-    end)
+    btn.MouseEnter:Connect(function() tween(btn, {BackgroundColor3 = hoverColor}, 0.15) end)
+    btn.MouseLeave:Connect(function() tween(btn, {BackgroundColor3 = normalColor}, 0.15) end)
 end
-
 addHover(MinBtn, Color3.fromRGB(50, 50, 50), Color3.fromRGB(70, 70, 70))
 addHover(CloseBtn, Color3.fromRGB(200, 50, 50), Color3.fromRGB(230, 70, 70))
 
@@ -248,7 +237,6 @@ DropBtnStroke.Color = Color3.fromRGB(60, 60, 60)
 DropBtnStroke.Thickness = 1
 local DropBtnPad = Instance.new("UIPadding", DropBtn)
 DropBtnPad.PaddingLeft = UDim.new(0, 10)
-
 addHover(DropBtn, Color3.fromRGB(35, 35, 35), Color3.fromRGB(45, 45, 45))
 
 local DropList = Instance.new("Frame")
@@ -302,17 +290,6 @@ HatchStatusLabel.TextColor3 = Color3.fromRGB(150, 150, 150)
 HatchStatusLabel.Font = Enum.Font.Gotham
 HatchStatusLabel.TextSize = 12
 
--- Currency finder label
-local CurrencyLabel = Instance.new("TextLabel")
-CurrencyLabel.Parent = Tab2Content
-CurrencyLabel.Size = UDim2.new(1, 0, 0, 25)
-CurrencyLabel.Position = UDim2.new(0, 0, 0, 238)
-CurrencyLabel.BackgroundTransparency = 1
-CurrencyLabel.Text = "Currency: checking..."
-CurrencyLabel.TextColor3 = Color3.fromRGB(80, 80, 80)
-CurrencyLabel.Font = Enum.Font.Gotham
-CurrencyLabel.TextSize = 11
-
 -- ========================
 -- TAB 3: Info
 -- ========================
@@ -346,7 +323,7 @@ VersionLabel.Parent = InfoCard
 VersionLabel.Size = UDim2.new(1, 0, 0, 25)
 VersionLabel.Position = UDim2.new(0, 0, 0, 55)
 VersionLabel.BackgroundTransparency = 1
-VersionLabel.Text = "version: 1.3"
+VersionLabel.Text = "version: 1.4"
 VersionLabel.TextColor3 = Color3.fromRGB(150, 150, 150)
 VersionLabel.Font = Enum.Font.Gotham
 VersionLabel.TextSize = 13
@@ -399,48 +376,6 @@ UserInputService.InputEnded:Connect(function(input)
 end)
 
 -- ========================
--- CURRENCY FINDER
--- ========================
-local foundCurrencyName = nil
-
-local function findAndBoostCurrency()
-    local currencyNames = {"Phonk", "phonk", "Coins", "coins", "Cash", "cash", "Gems", "gems", "Gold", "gold", "Credits", "credits", "Tokens", "tokens", "Points", "points"}
-    local stats = Player:FindFirstChild("leaderstats")
-    if stats then
-        -- show all stat names
-        local names = {}
-        for _, v in ipairs(stats:GetChildren()) do
-            table.insert(names, v.Name)
-        end
-        CurrencyLabel.Text = "Stats: " .. table.concat(names, ", ")
-
-        for _, v in ipairs(stats:GetChildren()) do
-            for _, cname in ipairs(currencyNames) do
-                if v.Name:lower() == cname:lower() then
-                    foundCurrencyName = v.Name
-                    CurrencyLabel.Text = "Currency: " .. v.Name .. " ✓"
-                    CurrencyLabel.TextColor3 = Color3.fromRGB(0, 200, 100)
-                    v.Value = v.Value + 999999999
-                    return true
-                end
-            end
-        end
-        -- If none matched just boost all number values
-        for _, v in ipairs(stats:GetChildren()) do
-            if v:IsA("IntValue") or v:IsA("NumberValue") then
-                v.Value = v.Value + 999999999
-            end
-        end
-    else
-        CurrencyLabel.Text = "No leaderstats found"
-        CurrencyLabel.TextColor3 = Color3.fromRGB(255, 100, 100)
-    end
-end
-
--- Run currency finder on load
-task.spawn(findAndBoostCurrency)
-
--- ========================
 -- EGG DROPDOWN
 -- ========================
 local selectedEgg = nil
@@ -482,7 +417,6 @@ local function buildDropList()
         local ip = Instance.new("UIPadding", item)
         ip.PaddingLeft = UDim.new(0, 10)
         item.TextXAlignment = Enum.TextXAlignment.Left
-
         item.MouseButton1Click:Connect(function()
             selectedEgg = eggName
             DropBtn.Text = "▼  " .. eggName
@@ -518,6 +452,7 @@ end)
 _G.clicking = false
 _G.hatching = false
 local minimized = false
+local savedHeight = 310
 local clicks = 0
 
 -- Auto clicker loop
@@ -534,31 +469,25 @@ task.spawn(function()
     end
 end)
 
--- Auto hatch loop - 2 eggs per invoke, with delay to avoid rate limit
+-- Auto hatch loop
 task.spawn(function()
     while true do
         if _G.hatching and selectedEgg then
-            findAndBoostCurrency()
             pcall(function()
                 local args = { selectedEgg, 2 }
                 ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("Egg"):InvokeServer(unpack(args))
             end)
-            task.wait(1.5) -- 1.5s between each batch so game doesn't rate limit
+            task.wait(1.5)
         else
             task.wait(0.1)
         end
     end
 end)
 
--- Toggle animations helper
+-- Toggle helper
 local function animateToggle(btn, state, onColor, offColor, onText, offText)
-    if state then
-        tween(btn, {BackgroundColor3 = onColor}, 0.2)
-        btn.Text = onText
-    else
-        tween(btn, {BackgroundColor3 = offColor}, 0.2)
-        btn.Text = offText
-    end
+    tween(btn, {BackgroundColor3 = state and onColor or offColor}, 0.2)
+    btn.Text = state and onText or offText
 end
 
 -- Clicker toggle
@@ -567,13 +496,8 @@ ToggleButton.MouseButton1Click:Connect(function()
     animateToggle(ToggleButton, _G.clicking,
         Color3.fromRGB(0, 200, 100), Color3.fromRGB(200, 50, 50),
         "Clicker: ON", "Clicker: OFF")
-    if _G.clicking then
-        StatusLabel.Text = "Status: Running"
-        tween(StatusLabel, {TextColor3 = Color3.fromRGB(0, 200, 100)}, 0.2)
-    else
-        StatusLabel.Text = "Status: Idle"
-        tween(StatusLabel, {TextColor3 = Color3.fromRGB(150, 150, 150)}, 0.2)
-    end
+    StatusLabel.Text = _G.clicking and "Status: Running" or "Status: Idle"
+    tween(StatusLabel, {TextColor3 = _G.clicking and Color3.fromRGB(0, 200, 100) or Color3.fromRGB(150, 150, 150)}, 0.2)
 end)
 
 -- Hatch toggle
@@ -587,22 +511,16 @@ HatchToggle.MouseButton1Click:Connect(function()
     animateToggle(HatchToggle, _G.hatching,
         Color3.fromRGB(0, 200, 100), Color3.fromRGB(200, 50, 50),
         "Auto Hatch: ON", "Auto Hatch: OFF")
-    if _G.hatching then
-        HatchStatusLabel.Text = "Hatching: " .. selectedEgg .. " x2"
-        tween(HatchStatusLabel, {TextColor3 = Color3.fromRGB(0, 200, 100)}, 0.2)
-    else
-        HatchStatusLabel.Text = "Status: Idle"
-        tween(HatchStatusLabel, {TextColor3 = Color3.fromRGB(150, 150, 150)}, 0.2)
-    end
+    HatchStatusLabel.Text = _G.hatching and ("Hatching: " .. selectedEgg .. " x2") or "Status: Idle"
+    tween(HatchStatusLabel, {TextColor3 = _G.hatching and Color3.fromRGB(0, 200, 100) or Color3.fromRGB(150, 150, 150)}, 0.2)
 end)
 
--- Tab switching with animations
+-- Tab switching
 local allTabs = {
     {btn = Tab1Btn, content = Tab1Content},
     {btn = Tab2Btn, content = Tab2Content},
     {btn = Tab3Btn, content = Tab3Content},
 }
-
 local function setTab(activeBtn, activeContent)
     for _, t in ipairs(allTabs) do
         if t.btn == activeBtn then
@@ -616,29 +534,32 @@ local function setTab(activeBtn, activeContent)
         end
     end
 end
-
 Tab1Btn.MouseButton1Click:Connect(function() setTab(Tab1Btn, Tab1Content) end)
 Tab2Btn.MouseButton1Click:Connect(function() setTab(Tab2Btn, Tab2Content) end)
 Tab3Btn.MouseButton1Click:Connect(function() setTab(Tab3Btn, Tab3Content) end)
 
--- Minimize with animation
+-- Minimize (fixed)
 MinBtn.MouseButton1Click:Connect(function()
     minimized = not minimized
     if minimized then
-        tween(ContentFrame, {Position = UDim2.new(0, 0, 1, 0)}, 0.25, Enum.EasingStyle.Quart)
-        task.delay(0.25, function() ContentFrame.Visible = false end)
-        tween(MainFrame, {Size = UDim2.new(0, MainFrame.AbsoluteSize.X, 0, 45)}, 0.3, Enum.EasingStyle.Quart)
+        savedHeight = MainFrame.AbsoluteSize.Y -- save current height before shrinking
+        local currentW = MainFrame.AbsoluteSize.X
+        ContentFrame.Visible = false
+        tween(MainFrame, {Size = UDim2.new(0, currentW, 0, 45)}, 0.3, Enum.EasingStyle.Quart)
         MinBtn.Text = "+"
     else
-        ContentFrame.Visible = true
-        ContentFrame.Position = UDim2.new(0, 0, 1, 0)
-        tween(MainFrame, {Size = UDim2.new(0, MainFrame.AbsoluteSize.X, 0, 310)}, 0.3, Enum.EasingStyle.Back)
-        tween(ContentFrame, {Position = UDim2.new(0, 0, 0, 0)}, 0.3, Enum.EasingStyle.Back)
+        local currentW = MainFrame.AbsoluteSize.X
+        tween(MainFrame, {Size = UDim2.new(0, currentW, 0, savedHeight)}, 0.3, Enum.EasingStyle.Back)
+        task.delay(0.1, function()
+            ContentFrame.Visible = true
+            -- reset ContentFrame position just in case
+            ContentFrame.Position = UDim2.new(0, 0, 0, 47)
+        end)
         MinBtn.Text = "-"
     end
 end)
 
--- Close with animation
+-- Close
 CloseBtn.MouseButton1Click:Connect(function()
     _G.clicking = false
     _G.hatching = false
