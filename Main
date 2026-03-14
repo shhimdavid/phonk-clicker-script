@@ -6,19 +6,16 @@ local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 local Player = Players.LocalPlayer
 
--- Tween helper
 local function tween(obj, props, t, style, dir)
     local info = TweenInfo.new(t or 0.2, style or Enum.EasingStyle.Quart, dir or Enum.EasingDirection.Out)
     TweenService:Create(obj, info, props):Play()
 end
 
--- Main GUI
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Parent = game.CoreGui
 ScreenGui.ResetOnSpawn = false
 ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
--- Main Frame
 local MainFrame = Instance.new("Frame")
 MainFrame.Parent = ScreenGui
 MainFrame.Size = UDim2.new(0, 0, 0, 0)
@@ -28,14 +25,12 @@ MainFrame.BorderSizePixel = 0
 MainFrame.Active = true
 MainFrame.Draggable = true
 MainFrame.ClipsDescendants = true
-
 local MainCorner = Instance.new("UICorner", MainFrame)
 MainCorner.CornerRadius = UDim.new(0, 12)
 local MainStroke = Instance.new("UIStroke", MainFrame)
 MainStroke.Color = Color3.fromRGB(60, 60, 60)
 MainStroke.Thickness = 1.5
 
--- Intro animation
 task.defer(function()
     tween(MainFrame, {
         Size = UDim2.new(0, 300, 0, 310),
@@ -43,7 +38,6 @@ task.defer(function()
     }, 0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
 end)
 
--- Top Bar
 local TopBar = Instance.new("Frame")
 TopBar.Parent = MainFrame
 TopBar.Size = UDim2.new(1, 0, 0, 45)
@@ -58,7 +52,6 @@ TopFix.Position = UDim2.new(0, 0, 0.5, 0)
 TopFix.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 TopFix.BorderSizePixel = 0
 
--- Accent line
 local AccentLine = Instance.new("Frame")
 AccentLine.Parent = MainFrame
 AccentLine.Size = UDim2.new(0, 0, 0, 2)
@@ -69,7 +62,6 @@ task.defer(function()
     tween(AccentLine, {Size = UDim2.new(1, 0, 0, 2)}, 0.6, Enum.EasingStyle.Quart)
 end)
 
--- Title
 local Title = Instance.new("TextLabel")
 Title.Parent = TopBar
 Title.Size = UDim2.new(0, 200, 1, 0)
@@ -81,7 +73,6 @@ Title.Font = Enum.Font.GothamBold
 Title.TextSize = 14
 Title.TextXAlignment = Enum.TextXAlignment.Left
 
--- Minimize Button
 local MinBtn = Instance.new("TextButton")
 MinBtn.Parent = TopBar
 MinBtn.Size = UDim2.new(0, 28, 0, 28)
@@ -95,7 +86,6 @@ MinBtn.BorderSizePixel = 0
 local MinCorner = Instance.new("UICorner", MinBtn)
 MinCorner.CornerRadius = UDim.new(0, 6)
 
--- Close Button
 local CloseBtn = Instance.new("TextButton")
 CloseBtn.Parent = TopBar
 CloseBtn.Size = UDim2.new(0, 28, 0, 28)
@@ -109,7 +99,6 @@ CloseBtn.BorderSizePixel = 0
 local CloseCorner = Instance.new("UICorner", CloseBtn)
 CloseCorner.CornerRadius = UDim.new(0, 6)
 
--- Hover animations
 local function addHover(btn, normalColor, hoverColor)
     btn.MouseEnter:Connect(function() tween(btn, {BackgroundColor3 = hoverColor}, 0.15) end)
     btn.MouseLeave:Connect(function() tween(btn, {BackgroundColor3 = normalColor}, 0.15) end)
@@ -117,7 +106,6 @@ end
 addHover(MinBtn, Color3.fromRGB(50, 50, 50), Color3.fromRGB(70, 70, 70))
 addHover(CloseBtn, Color3.fromRGB(200, 50, 50), Color3.fromRGB(230, 70, 70))
 
--- Content Frame
 local ContentFrame = Instance.new("Frame")
 ContentFrame.Parent = MainFrame
 ContentFrame.Size = UDim2.new(1, 0, 1, -47)
@@ -125,7 +113,6 @@ ContentFrame.Position = UDim2.new(0, 0, 0, 47)
 ContentFrame.BackgroundTransparency = 1
 ContentFrame.BorderSizePixel = 0
 
--- Tab Row
 local TabRow = Instance.new("Frame")
 TabRow.Parent = ContentFrame
 TabRow.Size = UDim2.new(1, -20, 0, 32)
@@ -447,7 +434,7 @@ DropBtn.MouseButton1Click:Connect(function()
 end)
 
 -- ========================
--- LOGIC / STATE
+-- LOGIC
 -- ========================
 _G.clicking = false
 _G.hatching = false
@@ -455,7 +442,6 @@ local minimized = false
 local savedHeight = 310
 local clicks = 0
 
--- Auto clicker loop
 task.spawn(function()
     while true do
         if _G.clicking then
@@ -469,13 +455,11 @@ task.spawn(function()
     end
 end)
 
--- Auto hatch loop
 task.spawn(function()
     while true do
         if _G.hatching and selectedEgg then
             pcall(function()
-                local args = { selectedEgg, 2 }
-                ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("Egg"):InvokeServer(unpack(args))
+                ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("Egg"):InvokeServer(selectedEgg, 2)
             end)
             task.wait(1.5)
         else
@@ -484,13 +468,11 @@ task.spawn(function()
     end
 end)
 
--- Toggle helper
 local function animateToggle(btn, state, onColor, offColor, onText, offText)
     tween(btn, {BackgroundColor3 = state and onColor or offColor}, 0.2)
     btn.Text = state and onText or offText
 end
 
--- Clicker toggle
 ToggleButton.MouseButton1Click:Connect(function()
     _G.clicking = not _G.clicking
     animateToggle(ToggleButton, _G.clicking,
@@ -500,7 +482,6 @@ ToggleButton.MouseButton1Click:Connect(function()
     tween(StatusLabel, {TextColor3 = _G.clicking and Color3.fromRGB(0, 200, 100) or Color3.fromRGB(150, 150, 150)}, 0.2)
 end)
 
--- Hatch toggle
 HatchToggle.MouseButton1Click:Connect(function()
     if not selectedEgg then
         HatchStatusLabel.Text = "⚠ Pick an egg first!"
@@ -515,13 +496,12 @@ HatchToggle.MouseButton1Click:Connect(function()
     tween(HatchStatusLabel, {TextColor3 = _G.hatching and Color3.fromRGB(0, 200, 100) or Color3.fromRGB(150, 150, 150)}, 0.2)
 end)
 
--- Tab switching
 local allTabs = {
     {btn = Tab1Btn, content = Tab1Content},
     {btn = Tab2Btn, content = Tab2Content},
     {btn = Tab3Btn, content = Tab3Content},
 }
-local function setTab(activeBtn, activeContent)
+local function setTab(activeBtn)
     for _, t in ipairs(allTabs) do
         if t.btn == activeBtn then
             tween(t.btn, {BackgroundColor3 = Color3.fromRGB(0, 200, 100)}, 0.2)
@@ -534,35 +514,35 @@ local function setTab(activeBtn, activeContent)
         end
     end
 end
-Tab1Btn.MouseButton1Click:Connect(function() setTab(Tab1Btn, Tab1Content) end)
-Tab2Btn.MouseButton1Click:Connect(function() setTab(Tab2Btn, Tab2Content) end)
-Tab3Btn.MouseButton1Click:Connect(function() setTab(Tab3Btn, Tab3Content) end)
+Tab1Btn.MouseButton1Click:Connect(function() setTab(Tab1Btn) end)
+Tab2Btn.MouseButton1Click:Connect(function() setTab(Tab2Btn) end)
+Tab3Btn.MouseButton1Click:Connect(function() setTab(Tab3Btn) end)
 
--- Minimize (fixed)
+-- ========================
+-- MINIMIZE (fixed)
+-- ========================
 MinBtn.MouseButton1Click:Connect(function()
     minimized = not minimized
     if minimized then
-        savedHeight = MainFrame.AbsoluteSize.Y -- save current height before shrinking
-        local currentW = MainFrame.AbsoluteSize.X
+        savedHeight = MainFrame.AbsoluteSize.Y
+        local w = MainFrame.AbsoluteSize.X
         ContentFrame.Visible = false
-        tween(MainFrame, {Size = UDim2.new(0, currentW, 0, 45)}, 0.3, Enum.EasingStyle.Quart)
+        MainFrame.Size = UDim2.new(0, w, 0, 45)
         MinBtn.Text = "+"
     else
-        local currentW = MainFrame.AbsoluteSize.X
-        tween(MainFrame, {Size = UDim2.new(0, currentW, 0, savedHeight)}, 0.3, Enum.EasingStyle.Back)
-        task.delay(0.1, function()
-            ContentFrame.Visible = true
-            -- reset ContentFrame position just in case
-            ContentFrame.Position = UDim2.new(0, 0, 0, 47)
-        end)
+        local w = MainFrame.AbsoluteSize.X
+        MainFrame.Size = UDim2.new(0, w, 0, savedHeight)
+        ContentFrame.Visible = true
         MinBtn.Text = "-"
     end
 end)
 
--- Close
 CloseBtn.MouseButton1Click:Connect(function()
     _G.clicking = false
     _G.hatching = false
-    tween(MainFrame, {Size = UDim2.new(0, 0, 0, 0), Position = UDim2.new(0.5, 0, 0.5, 0)}, 0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In)
+    tween(MainFrame, {
+        Size = UDim2.new(0, 0, 0, 0),
+        Position = UDim2.new(0.5, 0, 0.5, 0)
+    }, 0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In)
     task.delay(0.3, function() ScreenGui:Destroy() end)
 end)
